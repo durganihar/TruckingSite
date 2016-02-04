@@ -1,7 +1,11 @@
 <?php
 
+
+
 class SiteController extends Controller
 {
+	public $layout='//layouts/column2';
+	
 	/**
 	 * Declares class-based actions.
 	 */
@@ -116,29 +120,131 @@ class SiteController extends Controller
 	 
 	 public function actiondispatch()
 	 {
-	 	 $this->render('dispatch');
+	 	if(!Yii::app()->user->isGuest)
+	 	  $this->render('dispatch');
+	 	else
+	 	  $this->redirect(Yii::app()->homeUrl);
 	 }
 	 
     public function actiondispatchAdd()
 	 {
-	    
-	 	 $model=new DispatchForm;
+	    if(!Yii::app()->user->isGuest)
+	    {
+	 	  
+	 	 $model=new DispatchForm1();
 	 	 
-	 	if(isset($_POST['DispatchForm']))
+	 	if(isset($_POST['DispatchForm1']))
 		{
-			$model->vehicle_type_id=$_POST['DispatchForm']['vehicle_type_id'];
-			$model->vehicle_type=$_POST['DispatchForm']['vehicle_type'];
+			$model->vehicle_type_id=$_POST['DispatchForm1']['vehicle_type_id'];
+			$model->vehicle_type=$_POST['DispatchForm1']['vehicle_type'];
 			
      		$model->insertData();
      					
 		}
+		
+		 if(isset($_POST['Edit']))
+		{
+			echo "Dispatch id is".$_POST['Dispatch_Id'];
+			echo "</br>Vehicle id is".$_POST['Vehicle_Id'];
+			echo "</br>Customer id is".$_POST['Customer_Id'];
+     					
+		}
+		
+		 if(isset($_POST['View']))
+		 {
+		 	$this->dispatchDetails($_POST['Dispatch_Id'],$_POST['Vehicle_Id'],$_POST['Customer_Id']);
+		   	return;
+		 }
+	 		 
 	 		 	
 	 	 $this->render('DispatchAdd',array('model'=>$model));
+	    }
+	    else{
+	    	 $this->redirect(Yii::app()->homeUrl);
+	    }
 		
 	 }
 	 
-
+     /** Added For Ajax **/
 	 
+	 /**
+ 	 * Serves a list of suggestions matching the term $term, in form of
+     * a json-encoded object.
+     * @param string $term the string to match
+     */
+     public function actionSuggest($term='')
+     {
+     	die("Heelo!");
+  		$this->serveJson(Vehicles::model()->findMatches($term));
+	 }
+	 
+	 public function serveJson($object)
+	 {
+  		$this->serveContent('application/json', CJSON::encode($object), false);
+	 }
+	 
+	 public function serveContent($type, $content)
+	 {
+  		$this->_serve($type, $content, false);
+	 }
+	 
+	/**
+ 	* Serves a file via HTTP.
+ 	* @param string $type the Internet Media Type (MIME) of the file
+ 	* @param string $file the file to send
+ 	*/  
+	public function serveFile($type, $file)
+	{
+  		$this->_serve($type, $file, true);
+	}
 
+	/**
+ 	* Serves something via HTTP.
+ 	* @param string $type the Internet Media Type (MIME) of the content
+ 	* @param string $content the content to send
+ 	* @param boolean $is_file whether the content is a file
+	 */  
+	private function _serve($type, $content, $is_file=false)
+	{
+  	header("Content-Type: " . $type);
+ 	if ($is_file)
+  	{
+    	readfile($content);
+  	}
+  	else
+ 	 {
+    	echo $content;
+  	}
+  	Yii::app()->end();
+	}
+	 
+	  /** Added For Ajax **/
+
+	 public function actionDispatchsView()
+	 {
+	 	$model=new DispatchForm1();
+	 	
+	 	if(!Yii::app()->user->isGuest)
+	 	{
+	 	  	  $this->render('DispatchsView',array('model'=>$model));
+	 	}
+	 	else{
+	 	  	  $this->redirect(Yii::app()->homeUrl);
+	 	}
+	 }
+	 
+	public function actionDispatchDetails()
+	{
+		$this->render('DispatchDetails');
+	}
+	
+	public function dispatchDetails($dispatch_id,$vehicle_id,$cust_id)
+	{
+		echo "dispatch_id is : ".$dispatch_id."</br>";
+		echo "veh_id is : ".$vehicle_id."</br>";
+		echo "cust_id is : ".$cust_id."</br>";
+		$this->actionDispatchDetails();
+	}
+	
 	
 }

@@ -23,8 +23,13 @@
  * @property string $updated_by
  * @property string $updated_date
  */
-class Vehicles extends CActiveRecord
+class Vehicles extends CFormModel
 {
+	
+	private $licensePlateNumber;
+	private $status;
+	private $odometer;
+		
 	/**
 	 * @return string the associated database table name
 	 */
@@ -33,6 +38,38 @@ class Vehicles extends CActiveRecord
 		return 'vehicles';
 	}
 
+
+	
+	public function setLicensePlateNumber($LicenseString)
+	{
+		$this->licensePlateNumber=$LicenseString;
+	}
+	
+	
+	
+	public function getLicensePlateNumber()
+	{
+		return $this->licensePlateNumber;
+	}
+	
+	public function setStatus($statusString)
+	{
+		$this->status=$statusString;
+	}
+	
+	public function getStatus()
+	{
+		return $this->status;
+	}
+	public function setOdometer($odometer)
+	{
+		$this->odometer=$odometer;
+	}
+	
+	public function getOdometer()
+	{
+		return $this->odometer;
+	}
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -41,13 +78,17 @@ class Vehicles extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('vehicles_id, vehicles_type_id, motor_carrier_num, model_Year, org_id', 'numerical', 'integerOnly'=>true),
+			/*array('vehicles_id, vehicles_type_id, motor_carrier_num, model_Year, org_id', 'numerical', 'integerOnly'=>true),
 			array('make, STATUS, license_plate, VIn, Description, Year_Purchased, Initial_location, created_by, updated_by', 'length', 'max'=>255),
 			array('license_exp, Inspection_exp, created_date, updated_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('vehicles_id, vehicles_type_id, motor_carrier_num, make, model_Year, STATUS, license_plate, license_exp, Inspection_exp, VIn, Description, Year_Purchased, Initial_location, org_id, created_by, created_date, updated_by, updated_date', 'safe', 'on'=>'search'),
+		*/
+		
+		array('licensePlateNumber', 'required'),
 		);
+		
 	}
 
 	/**
@@ -140,4 +181,45 @@ class Vehicles extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+public function insertData($vehicleTypeId){
+	$command = Yii::app()->db->createCommand();
+	$command->insert('vehicles', array(
+    'license_plate'=>$this->licensePlateNumber,
+    'STATUS'=>$this->status,
+	'vehicles_type_id'=>$vehicleTypeId
+));
+}
+
+
+  /** Added for Ajax **/
+
+/**
+ * Retrieves tags that match a term.
+ * @param string $term a term to use for matching tags.
+ * @return array tags titles that match the term.
+ */
+public function findMatches($term='')
+{
+  if(''==$term)
+  {
+   return array();
+  }
+  $q = new CDbCriteria();
+  $q->addSearchCondition('license_plate', $term);
+  $q->select=array('license_plate');
+  $tags = self::model()->findAll($q);
+
+  $results=array();
+  foreach($tags as $tag)
+  {
+    $results[]=$tag->license_plate;
+  }
+  return $results;
+}
+
+  /** Added for Ajax **/
+
+
+
 }

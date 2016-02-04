@@ -1,8 +1,6 @@
-<?
-
-class DispatchForm extends CFormModel{
+<?php
+class DispatchForm1 extends CFormModel{
 	
-
     private $licensePlateNumber;
     private $odometer;
     private $CustomerName;
@@ -19,9 +17,9 @@ class DispatchForm extends CFormModel{
     private $Instructions2;
     private $PrimaryFee;
     private $Driver;
-     
-     
-    public function __get($property) {
+    
+    
+   public function __get($property) {
     if (property_exists($this, $property)) {
       return $this->$property;
     }
@@ -34,28 +32,7 @@ class DispatchForm extends CFormModel{
 
     return $this;
   }
-	
-	
-	
-	
-	public function tableName()
-	{
-		return 'vehiclestypes';
-	}
-	
-	
-	
-	
-public function rules()
-	{
-		return array(
-			// username and password are required
-			array('customerId, customerName', 'required','message' => 'Please choose a CustomerName/Id'),
-			
-		);
-	}
-
-	
+    
 public function getVehicles($typeid){
 	
 	$user = Yii::app()->db->createCommand()
@@ -66,7 +43,7 @@ public function getVehicles($typeid){
 
     return $user;
 }
-
+    
 public function getAllDispatches()
 {
 	$details = Yii::app()->db->createCommand()
@@ -76,8 +53,4 @@ public function getAllDispatches()
 
     return $details;
 }
-
-
-
 }
-?>

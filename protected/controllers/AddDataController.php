@@ -15,20 +15,19 @@ class AddDataController extends Controller
 	public function actionaddVehicles()
 	{
 		
-	$model=new DispatchForm;
+	$model=new Vehicles;
 	
 	
 	  if(!Yii::app()->user->isGuest)
 	  {
-	 	 if(isset($_POST['DispatchForm']))
+	 	 if(isset($_POST['Vehicles']))
 		 {
 			//$model->vehicle_type_id=$_POST['DispatchForm']['vehicle_type_id'];
 			//$model->vehicle_id=$_POST['DispatchForm']['vehicle_id'];
 			
-			$model->setLicensePlateNumber($_POST['DispatchForm']['licensePlateNumber']);
-			$model->setStatus($_POST['DispatchForm']['status']);
-			
-     		$model->insertData();
+			$model->setLicensePlateNumber($_POST['Vehicles']['licensePlateNumber']);
+			$model->setStatus($_POST['Vehicles']['status']);
+			$model->insertData(Yii::app()->session['vehicleTypeId']);
      					
 		}
 		$this->render('addVehicles',array('model'=>$model));

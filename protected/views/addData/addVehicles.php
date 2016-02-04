@@ -14,6 +14,7 @@
 		<?php echo $form->labelEx($model,'Truck License Number'); ?>
 		<?php echo $form->textField($model,'licensePlateNumber'); ?>
 		<?php echo $form->error($model,'licensePlateNumber'); ?>
+		<?php Yii::app()->session['vehicleTypeId'] = '1';  ?>
 		
 			</div>
 
